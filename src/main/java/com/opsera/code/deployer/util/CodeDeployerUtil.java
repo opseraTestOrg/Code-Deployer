@@ -62,27 +62,38 @@ public class CodeDeployerUtil {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<VaultRequest> requestEntity = new HttpEntity<>(vaultRequest, headers);
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getVaultBaseUrl())
-				.path(VAULT_READ);
-		ResponseEntity<VaultData> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST,
-				requestEntity, VaultData.class);
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getVaultBaseUrl()).path(VAULT_READ);
+		ResponseEntity<VaultData> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST,requestEntity, VaultData.class);
 		return response.getBody();
 	}
 
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
 	public Configuration getToolConfigurationDetails(ElasticBeanstalkDeployRequest request) {
 		RestTemplate restTemplate = factory.getRestTemplate();
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getPipelineConfigBaseUrl())
-				.path(TOOLS_CONFIG_URL);
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getPipelineConfigBaseUrl()).path(TOOLS_CONFIG_URL);
 		return restTemplate.postForObject(uriBuilder.toUriString(), request, Configuration.class);
 	}
 
+	/**
+	 * 
+	 * @param plainText
+	 * @return
+	 */
 	public String encodeString(String plainText) {
 		return Base64.getEncoder().encodeToString(plainText.getBytes());
 	}
 
+	/**
+	 * 
+	 * @param encodeString
+	 * @return
+	 */
 	public String decodeString(String encodeString) {
 		byte[] actualByte = Base64.getDecoder().decode(encodeString);
 		return new String(actualByte);
 	}
-
 }

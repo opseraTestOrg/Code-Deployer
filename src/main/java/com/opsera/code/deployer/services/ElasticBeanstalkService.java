@@ -41,20 +41,14 @@ public class ElasticBeanstalkService {
 	}
 
 	public void deploy(Configuration configuration) throws GeneralElasticBeanstalkException {
-
 		LOGGER.debug("Deploying application {} to Elastic Beanstalk.", configuration.getApplicationName());
 		try {
-
 			deployToBeantalk(configuration);
-			LOGGER.debug("Completed deploying to application {} with source bundle {}.",
-					configuration.getApplicationName(), configuration.getBucketName());
-
+			LOGGER.debug("Completed deploying to application {} with source bundle {}.", configuration.getApplicationName(), configuration.getBucketName());
 		} catch (Exception e) {
-			LOGGER.error(String.format("Error occurred while deploying to application %s with source bundle %s.",
-					configuration.getApplicationName(), configuration.getBucketName()), e);
+			LOGGER.error(String.format("Error occurred while deploying to application %s with source bundle %s.", configuration.getApplicationName(), configuration.getBucketName()), e);
 			throw e;
 		}
-
 	}
 
 	/**
@@ -70,10 +64,8 @@ public class ElasticBeanstalkService {
 		RestTemplate restTemplate = serviceFactory.getRestTemplate();
 		HttpEntity<Configuration> requestEntity = new HttpEntity<>(config, headers);
 		try {
-			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getAwsServiceBaseUrl())
-					.path(BEANSTALK_DEPLOY);
-			ResponseEntity<String> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST,
-					requestEntity, String.class);
+			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getAwsServiceBaseUrl()).path(BEANSTALK_DEPLOY);
+			ResponseEntity<String> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, requestEntity, String.class);
 			if (response.getStatusCode() == HttpStatus.OK) {
 				return response.getBody();
 			}
@@ -83,5 +75,4 @@ public class ElasticBeanstalkService {
 			throw new GeneralElasticBeanstalkException("Getting the issue deploy in Beanstalk");
 		}
 	}
-
 }

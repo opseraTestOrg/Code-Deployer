@@ -21,6 +21,10 @@ public class AppConfig {
 	@Value("${vault.service.baseurl}")
 	private String vaultBaseUrl;
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Bean
 	public ServiceLocatorFactoryBean serviceLocatorFactoryBean() {
 		ServiceLocatorFactoryBean factoryBean = new ServiceLocatorFactoryBean();
@@ -28,11 +32,19 @@ public class AppConfig {
 		return factoryBean;
 	}
 
-	@Bean
+	/**
+	 * 
+	 * @return
+	 */
+	@Bean()
 	public StopWatch stopWatch() {
 		return new StopWatch();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Bean
 	public RestTemplate getRestTemplate() {
 		return new RestTemplate();
@@ -58,5 +70,4 @@ public class AppConfig {
 	public String getVaultBaseUrl() {
 		return vaultBaseUrl;
 	}
-
 }

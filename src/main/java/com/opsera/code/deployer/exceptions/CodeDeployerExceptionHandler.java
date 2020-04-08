@@ -17,6 +17,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class CodeDeployerExceptionHandler extends ResponseEntityExceptionHandler {
 
+	/**
+	 * 
+	 * @param ex
+	 * @return
+	 */
 	@ExceptionHandler(InvalidDataException.class)
 	protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
 		CodeDeployerErrorResponse codeDeployerErrorResponse = new CodeDeployerErrorResponse();
@@ -25,6 +30,11 @@ public class CodeDeployerExceptionHandler extends ResponseEntityExceptionHandler
 		return new ResponseEntity<>(codeDeployerErrorResponse, HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * 
+	 * @param ex
+	 * @return
+	 */
 	@ExceptionHandler(GeneralElasticBeanstalkException.class)
 	protected ResponseEntity<Object> handleGeneralElasticBeanstalkException(GeneralElasticBeanstalkException ex) {
 		CodeDeployerErrorResponse codeDeployerErrorResponse = new CodeDeployerErrorResponse();

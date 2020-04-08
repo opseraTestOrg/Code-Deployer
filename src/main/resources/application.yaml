@@ -28,7 +28,6 @@ eureka:
     serviceUrl:
       defaultZone: http://microservices-dev.opsera.io:8761/eureka/
 
-
 ---
 
 spring:
@@ -52,7 +51,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone:  http://10.0.3.253:8761/eureka/
-   
+
 ---
 
 spring:
@@ -76,4 +75,3 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
-   

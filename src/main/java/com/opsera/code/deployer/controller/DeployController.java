@@ -35,15 +35,19 @@ public class DeployController {
 	@Autowired
 	private IServiceFactory serviceFactory;
 
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping(path = "v1.0/deploy/ebs", consumes = "application/json", produces = "application/json")
 	@ApiOperation("Deploys build artifacts from AWS S3 to Elastic Beanstalk.")
-	public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeploy(
-			@RequestBody ElasticBeanstalkDeployRequest request) throws Exception {
+	public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeploy(@RequestBody ElasticBeanstalkDeployRequest request) throws Exception {
 
 		long startTime = System.currentTimeMillis();
 		LOGGER.info("Starting AWS Elastic Beanstalk deployment.");
 		try {
-
 			ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
 			CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
 			Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
@@ -55,22 +59,19 @@ public class DeployController {
 			String secretkey = vaultData.getData().get(vaultSecretKey);
 			configuration.setSecretKey(codeDeployerUtil.decodeString(secretkey));
 			ebsService.deploy(configuration);
-			ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED",
-					"Elastic Beanstalk application deployed.");
-			LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.",
-					configuration.getApplicationName(), System.currentTimeMillis() - startTime);
+			ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.");
+			LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", configuration.getApplicationName(), System.currentTimeMillis() - startTime);
 			return new ResponseEntity<>(response, HttpStatus.OK);
-
 		} catch (Exception e) {
-
-			LOGGER.error("Failed deploying application time taken to execute {} secs",
-					System.currentTimeMillis() - startTime, e);
+			LOGGER.error("Failed deploying application time taken to execute {} secs", System.currentTimeMillis() - startTime, e);
 			throw e;
-
 		}
-
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@GetMapping("/status")
 	@ApiOperation("To check the service status.")
 	public String status() {

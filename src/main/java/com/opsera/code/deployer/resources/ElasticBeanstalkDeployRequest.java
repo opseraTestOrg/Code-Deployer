@@ -8,6 +8,7 @@ public class ElasticBeanstalkDeployRequest implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -7106363270587134425L;
+	
 	private String pipelineId;
 
 	private String jobId;
