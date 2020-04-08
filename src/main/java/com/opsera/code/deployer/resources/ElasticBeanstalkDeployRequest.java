@@ -4,59 +4,88 @@ import java.io.Serializable;
 
 public class ElasticBeanstalkDeployRequest implements Serializable {
 
-    private String awsAccessKeyId;
-    private String awsSecretAccessKey;
-    private String applicationName;
-    private String applicationVersionLabel;
-    private String s3Bucket;
-    private String s3Key;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7106363270587134425L;
+	private String pipelineId;
 
-    public String getAwsAccessKeyId() {
-        return awsAccessKeyId;
-    }
+	private String jobId;
 
-    public void setAwsAccessKeyId(String awsAccessKeyId) {
-        this.awsAccessKeyId = awsAccessKeyId;
-    }
+	private String customerId;
 
-    public String getAwsSecretAccessKey() {
-        return awsSecretAccessKey;
-    }
+	private String stepId;
 
-    public void setAwsSecretAccessKey(String awsSecretAccessKey) {
-        this.awsSecretAccessKey = awsSecretAccessKey;
-    }
+	private String action;
 
-    public String getApplicationName() {
-        return applicationName;
-    }
+	/**
+	 * @return the pipelineId
+	 */
+	public String getPipelineId() {
+		return pipelineId;
+	}
 
-    public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
+	/**
+	 * @param pipelineId the pipelineId to set
+	 */
+	public void setPipelineId(String pipelineId) {
+		this.pipelineId = pipelineId;
+	}
 
-    public String getApplicationVersionLabel() {
-        return applicationVersionLabel;
-    }
+	/**
+	 * @return the jobId
+	 */
+	public String getJobId() {
+		return jobId;
+	}
 
-    public void setApplicationVersionLabel(String applicationVersionLabel) {
-        this.applicationVersionLabel = applicationVersionLabel;
-    }
+	/**
+	 * @param jobId the jobId to set
+	 */
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
 
-    public String getS3Bucket() {
-        return s3Bucket;
-    }
+	/**
+	 * @return the customerId
+	 */
+	public String getCustomerId() {
+		return customerId;
+	}
 
-    public void setS3Bucket(String s3Bucket) {
-        this.s3Bucket = s3Bucket;
-    }
+	/**
+	 * @param customerId the customerId to set
+	 */
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
 
-    public String getS3Key() {
-        return s3Key;
-    }
+	/**
+	 * @return the stepId
+	 */
+	public String getStepId() {
+		return stepId;
+	}
 
-    public void setS3Key(String s3Key) {
-        this.s3Key = s3Key;
-    }
+	/**
+	 * @param stepId the stepId to set
+	 */
+	public void setStepId(String stepId) {
+		this.stepId = stepId;
+	}
+
+	/**
+	 * @return the action
+	 */
+	public String getAction() {
+		return action;
+	}
+
+	/**
+	 * @param action the action to set
+	 */
+	public void setAction(String action) {
+		this.action = action;
+	}
 
 }

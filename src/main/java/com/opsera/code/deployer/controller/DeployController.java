@@ -1,72 +1,79 @@
 package com.opsera.code.deployer.controller;
 
-import com.opsera.code.deployer.config.IServiceFactory;
-import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
-import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
-import com.opsera.code.deployer.services.ElasticBeanstalkService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.opsera.code.deployer.resources.Constants.VAULT_SECRET_KEY;
+
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.opsera.code.deployer.config.IServiceFactory;
+import com.opsera.code.deployer.resources.Configuration;
+import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
+import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
+import com.opsera.code.deployer.resources.VaultData;
+import com.opsera.code.deployer.resources.VaultRequest;
+import com.opsera.code.deployer.services.ElasticBeanstalkService;
+import com.opsera.code.deployer.util.CodeDeployerUtil;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api("Opsera API for integration with AWS CodeDeploy")
 public class DeployController {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DeployController.class);
+	public static final Logger LOGGER = LoggerFactory.getLogger(DeployController.class);
 
-    @Autowired
-    private IServiceFactory serviceFactory;
+	@Autowired
+	private IServiceFactory serviceFactory;
 
-    @GetMapping(path = "v1.0/deploy/ebs", consumes = "application/json", produces = "application/json")
-    @ApiOperation("Deploys build artifacts from AWS S3 to Elastic Beanstalk.")
-    public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeploy(@RequestBody ElasticBeanstalkDeployRequest request) {
+	@PostMapping(path = "v1.0/deploy/ebs", consumes = "application/json", produces = "application/json")
+	@ApiOperation("Deploys build artifacts from AWS S3 to Elastic Beanstalk.")
+	public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeploy(
+			@RequestBody ElasticBeanstalkDeployRequest request) throws Exception {
 
-        long startTime = System.currentTimeMillis();
-        LOGGER.info("Starting AWS Elastic Beanstalk deployment.");
+		long startTime = System.currentTimeMillis();
+		LOGGER.info("Starting AWS Elastic Beanstalk deployment.");
+		try {
 
-        try {
+			ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
+			CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
+			Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
+			VaultRequest vaultRequest = new VaultRequest();
+			vaultRequest.setCustomerId(request.getCustomerId());
+			String vaultSecretKey = String.format(VAULT_SECRET_KEY, request.getPipelineId(), request.getStepId());
+			vaultRequest.setComponentKeys(Arrays.asList(vaultSecretKey));
+			VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
+			String secretkey = vaultData.getData().get(vaultSecretKey);
+			configuration.setSecretKey(codeDeployerUtil.decodeString(secretkey));
+			ebsService.deploy(configuration);
+			ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED",
+					"Elastic Beanstalk application deployed.");
+			LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.",
+					configuration.getApplicationName(), System.currentTimeMillis() - startTime);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 
-            if(request == null || StringUtils.isEmpty(request.getAwsAccessKeyId()) ||
-                    StringUtils.isEmpty(request.getAwsSecretAccessKey()) ||
-                    StringUtils.isEmpty(request.getApplicationName()) ||
-                    StringUtils.isEmpty(request.getApplicationVersionLabel()) ||
-                    StringUtils.isEmpty(request.getS3Bucket()) ||
-                    StringUtils.isEmpty(request.getS3Key())) {
-                throw new IllegalArgumentException("Deploy requires an aws access key, aws secret, application name, application version, s3 bucket, and s3 key values.");
-            }
+		} catch (Exception e) {
 
-            ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
-            ebsService.deploy(request.getAwsAccessKeyId(), request.getAwsSecretAccessKey(),
-                    request.getApplicationName(), request.getApplicationVersionLabel(),
-                    request.getS3Bucket(), request.getS3Key());
+			LOGGER.error("Failed deploying application time taken to execute {} secs",
+					System.currentTimeMillis() - startTime, e);
+			throw e;
 
-            ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.");
-            LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", request.getApplicationName(),
-                    System.currentTimeMillis()-startTime);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 
-        } catch (Exception e) {
+	}
 
-            ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("FAILED", e.getMessage());
-            LOGGER.error("Failed triggering Job {} time taken to execute {} secs", request.getApplicationName(),
-                    System.currentTimeMillis()-startTime, e);
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-
-        }
-
-    }
-
-    @GetMapping("/status")
-    @ApiOperation("To check the service status.")
-    public String status() {
-        return "Code deployer service running";
-    }
+	@GetMapping("/status")
+	@ApiOperation("To check the service status.")
+	public String status() {
+		return "Code deployer service running";
+	}
 }
