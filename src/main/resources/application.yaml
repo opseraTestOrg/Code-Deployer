@@ -61,17 +61,17 @@ spring:
     description: API for integrating with deploy the code
 pipeline:
  config:
-  baseurl: https://localhost:9091/api/pipeline
+  baseurl: http://10.0.2.4:9091/api/pipeline
 aws:
  service:
-  baseurl: https://localhost:9091/api/aws
+  baseurl: http://10.0.2.4:9091/api/aws
 vault:
  service:
-  baseurl: http://localhost:9091/api/vault
+  baseurl: http://10.0.2.4:9091/api/vault
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
   client:
     serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
+      defaultZone: http://10.0.2.4:9091/eureka/

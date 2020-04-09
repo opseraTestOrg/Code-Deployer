@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.opsera.code.deployer.config.IServiceFactory;
+import com.opsera.code.deployer.exceptions.GeneralElasticBeanstalkException;
 import com.opsera.code.deployer.resources.Configuration;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
@@ -43,11 +44,10 @@ public class DeployController {
 	 */
 	@PostMapping(path = "v1.0/deploy/ebs", consumes = "application/json", produces = "application/json")
 	@ApiOperation("Deploys build artifacts from AWS S3 to Elastic Beanstalk.")
-	public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeploy(@RequestBody ElasticBeanstalkDeployRequest request) throws Exception {
+	public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeploy(@RequestBody ElasticBeanstalkDeployRequest request) throws GeneralElasticBeanstalkException {
 
 		long startTime = System.currentTimeMillis();
 		LOGGER.info("Starting AWS Elastic Beanstalk deployment.");
-		try {
 			ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
 			CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
 			Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
@@ -62,10 +62,7 @@ public class DeployController {
 			ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.");
 			LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", configuration.getApplicationName(), System.currentTimeMillis() - startTime);
 			return new ResponseEntity<>(response, HttpStatus.OK);
-		} catch (Exception e) {
-			LOGGER.error("Failed deploying application time taken to execute {} secs", System.currentTimeMillis() - startTime, e);
-			throw e;
-		}
+		
 	}
 
 	/**

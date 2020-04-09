@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -40,13 +39,18 @@ public class ElasticBeanstalkService {
 		this.appConfig = appConfig;
 	}
 
+	/**
+	 * 
+	 * @param configuration
+	 * @throws GeneralElasticBeanstalkException
+	 */
 	public void deploy(Configuration configuration) throws GeneralElasticBeanstalkException {
 		LOGGER.debug("Deploying application {} to Elastic Beanstalk.", configuration.getApplicationName());
 		try {
 			deployToBeantalk(configuration);
 			LOGGER.debug("Completed deploying to application {} with source bundle {}.", configuration.getApplicationName(), configuration.getBucketName());
-		} catch (Exception e) {
-			LOGGER.error(String.format("Error occurred while deploying to application %s with source bundle %s.", configuration.getApplicationName(), configuration.getBucketName()), e);
+		} catch (GeneralElasticBeanstalkException e) {
+			LOGGER.error("Error occurred while deploying to application {} with source bundle {} .", configuration.getApplicationName(), configuration.getBucketName(), e);
 			throw e;
 		}
 	}
@@ -63,16 +67,11 @@ public class ElasticBeanstalkService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		RestTemplate restTemplate = serviceFactory.getRestTemplate();
 		HttpEntity<Configuration> requestEntity = new HttpEntity<>(config, headers);
-		try {
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getAwsServiceBaseUrl()).path(BEANSTALK_DEPLOY);
 			ResponseEntity<String> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, requestEntity, String.class);
 			if (response.getStatusCode() == HttpStatus.OK) {
 				return response.getBody();
 			}
 			throw new GeneralElasticBeanstalkException("Failed to deploy in Beanstalk");
-		} catch (HttpClientErrorException e) {
-			LOGGER.error("Getting the issue deploy in Beanstalk", e);
-			throw new GeneralElasticBeanstalkException("Getting the issue deploy in Beanstalk");
-		}
 	}
 }
