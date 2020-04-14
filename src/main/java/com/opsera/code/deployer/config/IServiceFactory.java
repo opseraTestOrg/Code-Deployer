@@ -10,10 +10,14 @@ import com.opsera.code.deployer.util.CodeDeployerUtil;
 
 @Component
 public interface IServiceFactory {
-	
+
     public ElasticBeanstalkService getElasticBeanstalkDeployService();
+
     public StopWatch stopWatch();
+
     public RestTemplate getRestTemplate();
+
     public CodeDeployerUtil getCodeDeployerUtil();
-	public SSHService getSshService();
+
+    public SSHService getSshService();
 }
