@@ -3,8 +3,8 @@
  */
 package com.opsera.code.deployer.util;
 
-import static com.opsera.code.deployer.resources.Constants.TOOLS_CONFIG_URL;
-import static com.opsera.code.deployer.resources.Constants.VAULT_READ;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.TOOLS_CONFIG_URL;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.VAULT_READ;
 
 import java.util.Base64;
 

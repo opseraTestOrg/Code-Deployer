@@ -14,4 +14,13 @@ public class GeneralElasticBeanstalkException extends Exception {
 		super(message);
 	}
 
+	/**
+	 * 
+	 * @param message
+	 * @param throwable
+	 */
+	public GeneralElasticBeanstalkException(String message, Throwable throwable) {
+		super(message, throwable);
+	}
+
 }

@@ -20,6 +20,9 @@ aws:
 vault:
  service:
   baseurl: https://microservices-dev.opsera.io:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: https://microservices-dev.opsera.io:9091/api/jenkins
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1
@@ -44,6 +47,9 @@ aws:
 vault:
  service:
   baseurl: http://10.0.3.253:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: http://10.0.3.253:9091/api/jenkins
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1
@@ -68,6 +74,9 @@ aws:
 vault:
  service:
   baseurl: http://10.0.2.4:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: http://10.0.2.4:9091/api/jenkins
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1

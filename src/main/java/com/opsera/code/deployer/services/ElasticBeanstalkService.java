@@ -1,6 +1,6 @@
 package com.opsera.code.deployer.services;
 
-import static com.opsera.code.deployer.resources.Constants.BEANSTALK_DEPLOY;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.BEANSTALK_DEPLOY;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +49,9 @@ public class ElasticBeanstalkService {
 		try {
 			deployToBeantalk(configuration);
 			LOGGER.debug("Completed deploying to application {} with source bundle {}.", configuration.getApplicationName(), configuration.getBucketName());
-		} catch (GeneralElasticBeanstalkException e) {
+		} catch (Exception e) {
 			LOGGER.error("Error occurred while deploying to application {} with source bundle {} .", configuration.getApplicationName(), configuration.getBucketName(), e);
-			throw e;
+			throw new GeneralElasticBeanstalkException("Getting error while deploying the application");
 		}
 	}
 

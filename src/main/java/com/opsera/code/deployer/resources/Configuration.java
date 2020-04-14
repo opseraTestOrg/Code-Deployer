@@ -3,12 +3,18 @@
  */
 package com.opsera.code.deployer.resources;
 
+import java.io.Serializable;
+
 /**
  * @author Purusothaman
  *
  */
-public class Configuration {
+public class Configuration extends SSHDetails implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6071885561543648608L;
 	private String applicationName;
 	private String applicationVersionLabel;
 	private String bucketName;
@@ -21,6 +27,7 @@ public class Configuration {
 	private Integer port;
 	private String ec2KeyName;
 	private String platform;
+
 
 	/**
 	 * @return the applicationName
@@ -189,5 +196,4 @@ public class Configuration {
 	public void setPlatform(String platform) {
 		this.platform = platform;
 	}
-
 }

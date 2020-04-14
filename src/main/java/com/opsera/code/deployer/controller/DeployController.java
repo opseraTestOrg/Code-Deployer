@@ -1,6 +1,6 @@
 package com.opsera.code.deployer.controller;
 
-import static com.opsera.code.deployer.resources.Constants.VAULT_SECRET_KEY;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.VAULT_SECRET_KEY;
 
 import java.util.Arrays;
 
@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opsera.code.deployer.config.IServiceFactory;
 import com.opsera.code.deployer.exceptions.GeneralElasticBeanstalkException;
+import com.opsera.code.deployer.exceptions.InvalidDataException;
 import com.opsera.code.deployer.resources.Configuration;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
+import com.opsera.code.deployer.resources.SSHDeployResult;
 import com.opsera.code.deployer.resources.VaultData;
 import com.opsera.code.deployer.resources.VaultRequest;
 import com.opsera.code.deployer.services.ElasticBeanstalkService;
+import com.opsera.code.deployer.services.SSHService;
 import com.opsera.code.deployer.util.CodeDeployerUtil;
 
 import io.swagger.annotations.Api;
@@ -63,6 +66,34 @@ public class DeployController {
 			LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", configuration.getApplicationName(), System.currentTimeMillis() - startTime);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		
+	}
+	
+	/**
+	 * This method is used to deploy the application through ssh
+	 * 
+	 * @param request
+	 * @return
+	 * @throws GeneralElasticBeanstalkException
+	 * @throws InvalidDataException
+	 */
+	@PostMapping(path = "v1.0/deploy/ssh", consumes = "application/json", produces = "application/json")
+	@ApiOperation("Deploys build artifacts from SSH execution and upload.")
+	public ResponseEntity<SSHDeployResult> sshDeploy(@RequestBody ElasticBeanstalkDeployRequest request)
+			throws GeneralElasticBeanstalkException {
+
+		long startTime = System.currentTimeMillis();
+		LOGGER.info("Starting applocation deployment through ssh execution or file upload.");
+		SSHService sshService = serviceFactory.getSshService();
+
+		String sshResult = sshService.sshDeploy(request);
+		SSHDeployResult response = new SSHDeployResult();
+		response.setStatus("DEPLOYED");
+		response.setMessage("Application deployed through SSH");
+		response.setResult(sshResult);
+		LOGGER.info("Finished  applocation deployment through ssh execution or file upload.  {}",
+				System.currentTimeMillis() - startTime);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
 	}
 
 	/**

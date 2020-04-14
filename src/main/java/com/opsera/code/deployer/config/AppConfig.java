@@ -21,7 +21,12 @@ public class AppConfig {
 	@Value("${vault.service.baseurl}")
 	private String vaultBaseUrl;
 
+	@Value("${jenkins.integrator.baseurl}")
+	private String jenkinsIntegratorBaseUrl;
+
 	/**
+	 * Service factory bean creation. Bean factory will be created with the
+	 * interface, spring will take care of maintaining the bean lifecycle.
 	 * 
 	 * @return
 	 */
@@ -33,6 +38,8 @@ public class AppConfig {
 	}
 
 	/**
+	 * Creates a prototype bean for stop watch bean
+	 * 
 	 * 
 	 * @return
 	 */
@@ -42,6 +49,8 @@ public class AppConfig {
 	}
 
 	/**
+	 * 
+	 * create rest template bean
 	 * 
 	 * @return
 	 */
@@ -69,5 +78,12 @@ public class AppConfig {
 	 */
 	public String getVaultBaseUrl() {
 		return vaultBaseUrl;
+	}
+
+	/**
+	 * @return the jenkinsIntegratorBaseUrl
+	 */
+	public String getJenkinsIntegratorBaseUrl() {
+		return jenkinsIntegratorBaseUrl;
 	}
 }

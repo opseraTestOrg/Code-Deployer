@@ -17,6 +17,8 @@ public class SwaggerConfig {
 
 	/**
 	 * 
+	 * Swagger UI configuration.
+	 * 
 	 * @return
 	 */
     @Bean
@@ -30,9 +32,12 @@ public class SwaggerConfig {
     }
 
     /**
-     * 
-     * @return
-     */
+	 * 
+	 * Update this method for changing the Swagger API title, description and terms
+	 * of service.
+	 * 
+	 * @return
+	 */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Opsera CodeDeploy Integrator API")
