@@ -12,62 +12,78 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class AppConfig {
 
-	@Value("${pipeline.config.baseurl}")
-	private String pipelineConfigBaseUrl;
+    @Value("${pipeline.config.baseurl}")
+    private String pipelineConfigBaseUrl;
 
-	@Value("${aws.service.baseurl}")
-	private String awsServiceBaseUrl;
+    @Value("${aws.service.baseurl}")
+    private String awsServiceBaseUrl;
 
-	@Value("${vault.service.baseurl}")
-	private String vaultBaseUrl;
+    @Value("${vault.service.baseurl}")
+    private String vaultBaseUrl;
 
-	/**
-	 * 
-	 * @return
-	 */
-	@Bean
-	public ServiceLocatorFactoryBean serviceLocatorFactoryBean() {
-		ServiceLocatorFactoryBean factoryBean = new ServiceLocatorFactoryBean();
-		factoryBean.setServiceLocatorInterface(IServiceFactory.class);
-		return factoryBean;
-	}
+    @Value("${jenkins.integrator.baseurl}")
+    private String jenkinsIntegratorBaseUrl;
 
-	/**
-	 * 
-	 * @return
-	 */
-	@Bean()
-	public StopWatch stopWatch() {
-		return new StopWatch();
-	}
+    /**
+     * Service factory bean creation. Bean factory will be created with the
+     * interface, spring will take care of maintaining the bean lifecycle.
+     * 
+     * @return
+     */
+    @Bean
+    public ServiceLocatorFactoryBean serviceLocatorFactoryBean() {
+        ServiceLocatorFactoryBean factoryBean = new ServiceLocatorFactoryBean();
+        factoryBean.setServiceLocatorInterface(IServiceFactory.class);
+        return factoryBean;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	@Bean
-	public RestTemplate getRestTemplate() {
-		return new RestTemplate();
-	}
+    /**
+     * Creates a prototype bean for stop watch bean
+     * 
+     * 
+     * @return
+     */
+    @Bean()
+    public StopWatch stopWatch() {
+        return new StopWatch();
+    }
 
-	/**
-	 * @return the pipelineConfigBaseUrl
-	 */
-	public String getPipelineConfigBaseUrl() {
-		return pipelineConfigBaseUrl;
-	}
+    /**
+     * 
+     * create rest template bean
+     * 
+     * @return
+     */
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
 
-	/**
-	 * @return the awsServiceBaseUrl
-	 */
-	public String getAwsServiceBaseUrl() {
-		return awsServiceBaseUrl;
-	}
+    /**
+     * @return the pipelineConfigBaseUrl
+     */
+    public String getPipelineConfigBaseUrl() {
+        return pipelineConfigBaseUrl;
+    }
 
-	/**
-	 * @return the vaultBaseUrl
-	 */
-	public String getVaultBaseUrl() {
-		return vaultBaseUrl;
-	}
+    /**
+     * @return the awsServiceBaseUrl
+     */
+    public String getAwsServiceBaseUrl() {
+        return awsServiceBaseUrl;
+    }
+
+    /**
+     * @return the vaultBaseUrl
+     */
+    public String getVaultBaseUrl() {
+        return vaultBaseUrl;
+    }
+
+    /**
+     * @return the jenkinsIntegratorBaseUrl
+     */
+    public String getJenkinsIntegratorBaseUrl() {
+        return jenkinsIntegratorBaseUrl;
+    }
 }

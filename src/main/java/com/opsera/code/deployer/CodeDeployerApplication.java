@@ -8,7 +8,11 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @EnableEurekaClient
 public class CodeDeployerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CodeDeployerApplication.class, args);
-	}
+    /**
+     * 
+     * @param args
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(CodeDeployerApplication.class, args);
+    }
 }

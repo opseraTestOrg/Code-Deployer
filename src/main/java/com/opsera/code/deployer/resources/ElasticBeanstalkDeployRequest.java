@@ -4,89 +4,89 @@ import java.io.Serializable;
 
 public class ElasticBeanstalkDeployRequest implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7106363270587134425L;
-	
-	private String pipelineId;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7106363270587134425L;
 
-	private String jobId;
+    private String pipelineId;
 
-	private String customerId;
+    private String jobId;
 
-	private String stepId;
+    private String customerId;
 
-	private String action;
+    private String stepId;
 
-	/**
-	 * @return the pipelineId
-	 */
-	public String getPipelineId() {
-		return pipelineId;
-	}
+    private String action;
 
-	/**
-	 * @param pipelineId the pipelineId to set
-	 */
-	public void setPipelineId(String pipelineId) {
-		this.pipelineId = pipelineId;
-	}
+    /**
+     * @return the pipelineId
+     */
+    public String getPipelineId() {
+        return pipelineId;
+    }
 
-	/**
-	 * @return the jobId
-	 */
-	public String getJobId() {
-		return jobId;
-	}
+    /**
+     * @param pipelineId the pipelineId to set
+     */
+    public void setPipelineId(String pipelineId) {
+        this.pipelineId = pipelineId;
+    }
 
-	/**
-	 * @param jobId the jobId to set
-	 */
-	public void setJobId(String jobId) {
-		this.jobId = jobId;
-	}
+    /**
+     * @return the jobId
+     */
+    public String getJobId() {
+        return jobId;
+    }
 
-	/**
-	 * @return the customerId
-	 */
-	public String getCustomerId() {
-		return customerId;
-	}
+    /**
+     * @param jobId the jobId to set
+     */
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
 
-	/**
-	 * @param customerId the customerId to set
-	 */
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
+    /**
+     * @return the customerId
+     */
+    public String getCustomerId() {
+        return customerId;
+    }
 
-	/**
-	 * @return the stepId
-	 */
-	public String getStepId() {
-		return stepId;
-	}
+    /**
+     * @param customerId the customerId to set
+     */
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 
-	/**
-	 * @param stepId the stepId to set
-	 */
-	public void setStepId(String stepId) {
-		this.stepId = stepId;
-	}
+    /**
+     * @return the stepId
+     */
+    public String getStepId() {
+        return stepId;
+    }
 
-	/**
-	 * @return the action
-	 */
-	public String getAction() {
-		return action;
-	}
+    /**
+     * @param stepId the stepId to set
+     */
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
+    }
 
-	/**
-	 * @param action the action to set
-	 */
-	public void setAction(String action) {
-		this.action = action;
-	}
+    /**
+     * @return the action
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * @param action the action to set
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
 
 }

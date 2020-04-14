@@ -15,29 +15,26 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	/**
-	 * 
-	 * @return
-	 */
+    /**
+     * 
+     * Swagger UI configuration.
+     * 
+     * @return
+     */
     @Bean
     public Docket deploymentApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.opsera.code.deployer.controller"))
-                .paths(PathSelectors.any())
-                .build()
-                .apiInfo(apiInfo());
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("com.opsera.code.deployer.controller")).paths(PathSelectors.any()).build().apiInfo(apiInfo());
     }
 
     /**
      * 
+     * Update this method for changing the Swagger API title, description and terms
+     * of service.
+     * 
      * @return
      */
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Opsera CodeDeploy Integrator API")
-                .description("Opsera API for integrating with AWS CodeDeploy")
-                .termsOfServiceUrl("https://opsera.io/legal.html")
+        return new ApiInfoBuilder().title("Opsera CodeDeploy Integrator API").description("Opsera API for integrating with AWS CodeDeploy").termsOfServiceUrl("https://opsera.io/legal.html")
                 .version("1.0").build();
     }
 }
