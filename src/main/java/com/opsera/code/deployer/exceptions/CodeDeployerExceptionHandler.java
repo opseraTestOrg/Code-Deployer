@@ -17,30 +17,30 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class CodeDeployerExceptionHandler extends ResponseEntityExceptionHandler {
 
-	/**
-	 * 
-	 * @param ex
-	 * @return
-	 */
-	@ExceptionHandler(InvalidDataException.class)
-	protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
-		CodeDeployerErrorResponse codeDeployerErrorResponse = new CodeDeployerErrorResponse();
-		codeDeployerErrorResponse.setMessage(ex.getMessage());
-		codeDeployerErrorResponse.setStatus(HttpStatus.BAD_REQUEST.name());
-		return new ResponseEntity<>(codeDeployerErrorResponse, HttpStatus.BAD_REQUEST);
-	}
+    /**
+     * 
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(InvalidDataException.class)
+    protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex) {
+        CodeDeployerErrorResponse codeDeployerErrorResponse = new CodeDeployerErrorResponse();
+        codeDeployerErrorResponse.setMessage(ex.getMessage());
+        codeDeployerErrorResponse.setStatus(HttpStatus.BAD_REQUEST.name());
+        return new ResponseEntity<>(codeDeployerErrorResponse, HttpStatus.BAD_REQUEST);
+    }
 
-	/**
-	 * 
-	 * @param ex
-	 * @return
-	 */
-	@ExceptionHandler(GeneralElasticBeanstalkException.class)
-	protected ResponseEntity<Object> handleGeneralElasticBeanstalkException(GeneralElasticBeanstalkException ex) {
-		CodeDeployerErrorResponse codeDeployerErrorResponse = new CodeDeployerErrorResponse();
-		codeDeployerErrorResponse.setMessage(ex.getMessage());
-		codeDeployerErrorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.name());
-		return new ResponseEntity<>(codeDeployerErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(GeneralElasticBeanstalkException.class)
+    protected ResponseEntity<Object> handleGeneralElasticBeanstalkException(GeneralElasticBeanstalkException ex) {
+        CodeDeployerErrorResponse codeDeployerErrorResponse = new CodeDeployerErrorResponse();
+        codeDeployerErrorResponse.setMessage(ex.getMessage());
+        codeDeployerErrorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.name());
+        return new ResponseEntity<>(codeDeployerErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }

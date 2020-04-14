@@ -1,33 +1,10 @@
-/**
- * 
- */
-package com.opsera.code.deployer.exceptions;
+package com.opsera.code.deployer.resources;
 
-import java.io.Serializable;
-
-/**
- * @author sundar
- *
- */
-public class CodeDeployerErrorResponse implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 5983466883002203161L;
-
+public class SSHDeployResult {
+    
     private String status;
-
     private String message;
-
-    public CodeDeployerErrorResponse() {
-        // do nothing
-    }
-
-    public CodeDeployerErrorResponse(String status, String message) {
-        this.status = status;
-        this.message = message;
-    }
+    private String result;
 
     /**
      * @return the status
@@ -56,4 +33,19 @@ public class CodeDeployerErrorResponse implements Serializable {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    /**
+     * @return the result
+     */
+    public String getResult() {
+        return result;
+    }
+
+    /**
+     * @param result the result to set
+     */
+    public void setResult(String result) {
+        this.result = result;
+    }
+
 }

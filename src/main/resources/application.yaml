@@ -4,13 +4,21 @@ logging:
 server:
    port: 8077
    
----
-   
 spring:
- profiles: dev
  application:
     name: code-deployer
     description: API for integrating with deploy the code
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+
+---
+
+spring:
+ profiles: dev
+
 pipeline:
  config:
   baseurl: https://microservices-dev.opsera.io:9091/api/pipeline
@@ -20,10 +28,10 @@ aws:
 vault:
  service:
   baseurl: https://microservices-dev.opsera.io:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: https://microservices-dev.opsera.io:9091/api/jenkins
 eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
   client:
     serviceUrl:
       defaultZone: http://microservices-dev.opsera.io:8761/eureka/
@@ -32,9 +40,7 @@ eureka:
 
 spring:
  profiles: test
- application:
-    name: code-deployer
-    description: API for integrating with deploy the code
+ 
 pipeline:
  config:
   baseurl: http://10.0.3.253:9091/api/pipeline
@@ -44,10 +50,10 @@ aws:
 vault:
  service:
   baseurl: http://10.0.3.253:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: http://10.0.3.253:9091/api/jenkins
 eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
   client:
     serviceUrl:
       defaultZone:  http://10.0.3.253:8761/eureka/
@@ -56,9 +62,7 @@ eureka:
 
 spring:
  profiles: prod
- application:
-    name: code-deployer
-    description: API for integrating with deploy the code
+
 pipeline:
  config:
   baseurl: http://10.0.2.4:9091/api/pipeline
@@ -68,10 +72,11 @@ aws:
 vault:
  service:
   baseurl: http://10.0.2.4:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: http://10.0.2.4:9091/api/jenkins
 eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
   client:
     serviceUrl:
       defaultZone: http://10.0.2.4:9091/eureka/
+      
