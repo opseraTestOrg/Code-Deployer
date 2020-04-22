@@ -1,0 +1,4 @@
+#build dev image
+
+docker build -t opsera-code-deployer .
+docker run -p 8077:8077 --name code-deployer --env DOCKER_ENV=dev -d opsera-code-deployer
