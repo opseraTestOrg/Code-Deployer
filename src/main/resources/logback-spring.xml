@@ -2,6 +2,11 @@
 
 <configuration>
 
+	<springProperty name="LOG_PATH" source="logging.path"
+		defaultValue="/apps/OpsERA/logs/components/code-deployer" />
+	<springProperty name="LOG_FILE" source="logging.file"
+		defaultValue="codeDeployer" />
+
 	<property name="LOG_PATTERN"
 		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n" />
 	<appender name="console"
