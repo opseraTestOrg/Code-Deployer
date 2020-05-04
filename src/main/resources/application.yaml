@@ -21,16 +21,16 @@ spring:
 
 pipeline:
  config:
-  baseurl: https://microservices-dev.opsera.io:9091/api/pipeline
+  baseurl: http://microservices-dev.opsera.io:9091/api/pipeline
 aws:
  service:
-  baseurl: https://microservices-dev.opsera.io:9091/api/aws
+  baseurl: http://microservices-dev.opsera.io:9091/api/aws
 vault:
  service:
-  baseurl: https://microservices-dev.opsera.io:9091/api/vault
+  baseurl: http://microservices-dev.opsera.io:9091/api/vault
 jenkins:
  integrator:
-  baseurl: https://microservices-dev.opsera.io:9091/api/jenkins
+  baseurl: http://microservices-dev.opsera.io:9091/api/jenkins
 eureka:
   client:
     serviceUrl:
