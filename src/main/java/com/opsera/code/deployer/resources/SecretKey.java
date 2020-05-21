@@ -19,7 +19,9 @@ public class SecretKey implements Serializable {
      * 
      */
     private static final long serialVersionUID = -4427554139526784456L;
+
     private String name;
+
     private String vaultKey;
 
 }

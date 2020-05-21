@@ -13,7 +13,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SshKey {
+
     private String fileName;
+
     private String vaultKey;
 
 }

@@ -17,12 +17,19 @@ import lombok.Setter;
 public class SSHDetails {
 
     private String serverIp;
+
     private String userName;
+
     private String serverPath;
+
     private List<String> commands;
+
     private String sshAuthKeyName;
+
     private SecretKey secretKey;
+
     private SshKey sshKey;
+
     private String sshAction;
 
 }

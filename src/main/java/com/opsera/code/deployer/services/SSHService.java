@@ -47,6 +47,7 @@ import com.opsera.code.deployer.util.CodeDeployerUtil;
  */
 @Service
 public class SSHService {
+
     public static final Logger LOGGER = LoggerFactory.getLogger(SSHService.class);
 
     private IServiceFactory serviceFactory;

@@ -23,8 +23,11 @@ public class SSHDetailsRequest extends SSHDetails implements Serializable {
     private static final long serialVersionUID = -987742566166286199L;
 
     private String sshAuthKey;
+
     private String action;
+
     private File file;
+
     private String fileName;
 
 }
