@@ -6,8 +6,6 @@ package com.opsera.code.deployer.services;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.GET_ARTIFACT_DETAILS;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.SSH_DEPLOY;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.SSH_FILE_UPLOAD;
-import static com.opsera.code.deployer.resources.CodeDeployerConstants.VAULT_SECRET_KEY;
-import static com.opsera.code.deployer.resources.CodeDeployerConstants.VAULT_SSH_KEY;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -78,22 +76,18 @@ public class SSHService {
             LOGGER.debug("Started to deploying the application through ssh");
             CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
             Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
-            
+
             VaultRequest vaultRequest = new VaultRequest();
             vaultRequest.setCustomerId(request.getCustomerId());
-            
-            String vaultSecretKey = String.format(VAULT_SECRET_KEY, request.getPipelineId(), request.getStepId());
-            String vaultSSHKey = String.format(VAULT_SSH_KEY, request.getPipelineId(), request.getStepId());
-            vaultRequest.setComponentKeys(Arrays.asList(vaultSecretKey, vaultSSHKey));
-            
+
+            vaultRequest.setComponentKeys(Arrays.asList(configuration.getSshKey().getVaultKey()));
+
             VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
-            String secretkey = vaultData.getData().get(vaultSecretKey);
-            String sshKey = vaultData.getData().get(vaultSSHKey);
-            
-            configuration.setSecretKey(codeDeployerUtil.decodeString(secretkey));
+            String sshKey = vaultData.getData().get(configuration.getSshKey().getVaultKey());
+
             SSHDetailsRequest sshDetailsRequest = getSshDetailsRequest(configuration, sshKey);
-            
-            if (SSH_FILE_UPLOAD.equalsIgnoreCase(request.getAction())) {
+
+            if (SSH_FILE_UPLOAD.equalsIgnoreCase(configuration.getSshAction())) {
                 getArtifactDetails(request, sshDetailsRequest);
             }
             String executionResult = deployToSshExecution(sshDetailsRequest);
@@ -117,10 +111,11 @@ public class SSHService {
         SSHDetailsRequest sshDetails = new SSHDetailsRequest();
         sshDetails.setUserName(configuration.getUserName());
         sshDetails.setServerIp(configuration.getServerIp());
-        sshDetails.setSshKeyName(configuration.getSshKeyName());
+        sshDetails.setSshAuthKeyName(configuration.getSshKey().getFileName());
         sshDetails.setServerPath(configuration.getServerPath());
         sshDetails.setCommands(configuration.getCommands());
-        sshDetails.setSshKey(codeDeployerUtil.decodeString(sshkey));
+        sshDetails.setSshAuthKey(codeDeployerUtil.decodeString(sshkey));
+        sshDetails.setSshAction(configuration.getSshAction());
         return sshDetails;
     }
 
@@ -154,7 +149,7 @@ public class SSHService {
      *
      */
     private SSHDetailsRequest getArtifactDetails(ElasticBeanstalkDeployRequest request, SSHDetailsRequest sshDetailsRequest) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = serviceFactory.getRestTemplate();
         restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
 
         HttpHeaders headers = new HttpHeaders();

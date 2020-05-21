@@ -1,7 +1,5 @@
 package com.opsera.code.deployer.controller;
 
-import static com.opsera.code.deployer.resources.CodeDeployerConstants.VAULT_SECRET_KEY;
-
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -57,11 +55,11 @@ public class DeployController {
         Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
         VaultRequest vaultRequest = new VaultRequest();
         vaultRequest.setCustomerId(request.getCustomerId());
-        String vaultSecretKey = String.format(VAULT_SECRET_KEY, request.getPipelineId(), request.getStepId());
+        String vaultSecretKey = configuration.getSecretKey().getVaultKey();
         vaultRequest.setComponentKeys(Arrays.asList(vaultSecretKey));
         VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
         String secretkey = vaultData.getData().get(vaultSecretKey);
-        configuration.setSecretKey(codeDeployerUtil.decodeString(secretkey));
+        configuration.setAwsSecretKey(codeDeployerUtil.decodeString(secretkey));
         ebsService.deploy(configuration);
         ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.");
         LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", configuration.getApplicationName(), System.currentTimeMillis() - startTime);
