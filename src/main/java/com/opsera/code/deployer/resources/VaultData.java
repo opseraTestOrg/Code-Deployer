@@ -10,6 +10,7 @@ import java.util.Map;
  *
  */
 public class VaultData {
+
     private Map<String, String> data;
 
     /**

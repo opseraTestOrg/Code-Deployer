@@ -40,7 +40,7 @@ public class ElasticBeanstalkService {
     }
 
     /**
-     * For deploying to elastic beanstalk 
+     * For deploying to elastic beanstalk
      * 
      * 
      * @param configuration
@@ -59,7 +59,7 @@ public class ElasticBeanstalkService {
 
     /**
      * 
-     * Deploys an application to elastic bean stalk 
+     * Deploys an application to elastic bean stalk
      * 
      * @param config
      * @return

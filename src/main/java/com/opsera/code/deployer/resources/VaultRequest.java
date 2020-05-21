@@ -17,6 +17,7 @@ public class VaultRequest implements Serializable {
     private static final long serialVersionUID = 6024748784122853021L;
 
     private String customerId;
+
     private List<String> componentKeys;
 
     /**

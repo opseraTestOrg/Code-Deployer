@@ -1,9 +1,11 @@
 package com.opsera.code.deployer.resources;
 
 public class SSHDeployResult {
-    
+
     private String status;
+
     private String message;
+
     private String result;
 
     /**
