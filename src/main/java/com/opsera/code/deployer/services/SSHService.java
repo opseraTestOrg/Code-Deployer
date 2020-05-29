@@ -7,11 +7,8 @@ import static com.opsera.code.deployer.resources.CodeDeployerConstants.GET_ARTIF
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.SSH_DEPLOY;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.SSH_FILE_UPLOAD;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -73,7 +70,6 @@ public class SSHService {
      * @throws GeneralElasticBeanstalkException
      */
     public String sshDeploy(ElasticBeanstalkDeployRequest request) throws GeneralElasticBeanstalkException {
-        try {
             LOGGER.debug("Started to deploying the application through ssh");
             CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
             Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
@@ -95,9 +91,6 @@ public class SSHService {
             LOGGER.debug("Completed deploying the application through ssh{}.", configuration.getServerIp());
 
             return executionResult;
-        } catch (IOException e) {
-            throw new GeneralElasticBeanstalkException("Error occurred while deploying to application ", e);
-        }
     }
 
     /**
@@ -149,29 +142,19 @@ public class SSHService {
      * @throws IOException
      *
      */
-    private SSHDetailsRequest getArtifactDetails(ElasticBeanstalkDeployRequest request, SSHDetailsRequest sshDetailsRequest) throws IOException {
+    private SSHDetailsRequest getArtifactDetails(ElasticBeanstalkDeployRequest request, SSHDetailsRequest sshDetailsRequest) {
         RestTemplate restTemplate = serviceFactory.getRestTemplate();
         restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
-
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-
         HttpEntity<ElasticBeanstalkDeployRequest> entity = new HttpEntity<>(request, headers);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getJenkinsIntegratorBaseUrl()).path(GET_ARTIFACT_DETAILS);
-
         ResponseEntity<byte[]> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, entity, byte[].class);
-
         if (response.getStatusCode() == HttpStatus.OK) {
             ContentDisposition contentDisposition = response.getHeaders().getContentDisposition();
             String fileName = contentDisposition.getFilename();
-            String filePrefix = fileName.substring(0, fileName.lastIndexOf('.'));
-            String fileSuffix = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
-            File file = File.createTempFile(filePrefix, fileSuffix);
-            try (OutputStream out = new FileOutputStream(file)) {
-                out.write(response.getBody());
-            }
-            sshDetailsRequest.setFile(file);
             sshDetailsRequest.setFileName(fileName);
+            sshDetailsRequest.setFile(response.getBody());
         }
         return sshDetailsRequest;
     }
