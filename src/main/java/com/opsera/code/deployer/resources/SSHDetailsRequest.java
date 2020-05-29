@@ -3,7 +3,6 @@
  */
 package com.opsera.code.deployer.resources;
 
-import java.io.File;
 import java.io.Serializable;
 
 import lombok.Getter;
@@ -26,8 +25,8 @@ public class SSHDetailsRequest extends SSHDetails implements Serializable {
 
     private String action;
 
-    private File file;
-
     private String fileName;
+
+    private byte[] file;
 
 }
