@@ -53,6 +53,11 @@ public class DeployController {
         ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
         CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
         Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
+        ElasticBeanstalkDeployRequest s3Request = new ElasticBeanstalkDeployRequest();
+        s3Request.setPipelineId(request.getPipelineId());
+        s3Request.setStepId(configuration.getS3StepId());
+        Configuration s3UrlConfig = codeDeployerUtil.getToolConfigurationDetails(s3Request);
+        configuration.setS3Url(s3UrlConfig.getS3Url());
         VaultRequest vaultRequest = new VaultRequest();
         vaultRequest.setCustomerId(request.getCustomerId());
         String vaultSecretKey = configuration.getSecretKey().getVaultKey();
