@@ -80,3 +80,25 @@ eureka:
     serviceUrl:
       defaultZone: http://10.0.2.4:9091/eureka/
       
+---
+
+spring:
+ profiles: freetrial
+
+pipeline:
+ config:
+  baseurl: http://10.0.2.164:9091/api/pipeline
+aws:
+ service:
+  baseurl: http://10.0.2.164:9091/api/aws
+vault:
+ service:
+  baseurl: http://10.0.2.164:9091/api/vault
+jenkins:
+ integrator:
+  baseurl: http://10.0.2.164:9091/api/jenkins
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://10.0.2.164:9091/eureka/
+      
