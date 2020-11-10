@@ -56,6 +56,7 @@ public class DeployController {
         ElasticBeanstalkDeployRequest s3Request = new ElasticBeanstalkDeployRequest();
         s3Request.setPipelineId(request.getPipelineId());
         s3Request.setStepId(configuration.getS3StepId());
+        s3Request.setCustomerId(request.getCustomerId());
         Configuration s3UrlConfig = codeDeployerUtil.getToolConfigurationDetails(s3Request);
         configuration.setS3Url(s3UrlConfig.getS3Url());
         VaultRequest vaultRequest = new VaultRequest();
