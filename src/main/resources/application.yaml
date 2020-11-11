@@ -43,20 +43,20 @@ spring:
  
 pipeline:
  config:
-  baseurl: http://10.0.3.253:9091/api/pipeline
+  baseurl: https://microservice.internal.opsera.io/api/pipeline
 aws:
  service:
-  baseurl: http://10.0.3.253:9091/api/aws
+  baseurl: https://microservice.internal.opsera.io/api/aws
 vault:
  service:
-  baseurl: http://10.0.3.253:9091/api/vault
+  baseurl: https://microservice.internal.opsera.io/api/vault
 jenkins:
  integrator:
-  baseurl: http://10.0.3.253:9091/api/jenkins
+  baseurl: https://microservice.internal.opsera.io/api/jenkins
 eureka:
   client:
     serviceUrl:
-      defaultZone:  http://10.0.3.253:8761/eureka/
+      defaultZone: https://microservice.internal.opsera.io:8761/eureka/
 
 ---
 
@@ -65,20 +65,20 @@ spring:
 
 pipeline:
  config:
-  baseurl: http://10.0.2.4:9091/api/pipeline
+  baseurl: https://microservice.internal.opsera.io/api/pipeline
 aws:
  service:
-  baseurl: http://10.0.2.4:9091/api/aws
+  baseurl: https://microservice.internal.opsera.io/api/aws
 vault:
  service:
-  baseurl: http://10.0.2.4:9091/api/vault
+  baseurl: https://microservice.internal.opsera.io/api/vault
 jenkins:
  integrator:
-  baseurl: http://10.0.2.4:9091/api/jenkins
+  baseurl: https://microservice.internal.opsera.io/api/jenkins
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.0.2.4:9091/eureka/
+      defaultZone: https://microservice.internal.opsera.io:8761/eureka/
       
 ---
 
@@ -87,18 +87,18 @@ spring:
 
 pipeline:
  config:
-  baseurl: http://10.0.2.164:9091/api/pipeline
+  baseurl: https://freetrial-microservice.opsera.io/api/pipeline
 aws:
  service:
-  baseurl: http://10.0.2.164:9091/api/aws
+  baseurl: https://freetrial-microservice.opsera.io/api/aws
 vault:
  service:
-  baseurl: http://10.0.2.164:9091/api/vault
+  baseurl: https://freetrial-microservice.opsera.io/api/vault
 jenkins:
  integrator:
-  baseurl: http://10.0.2.164:9091/api/jenkins
+  baseurl: https://freetrial-microservice.opsera.io/api/jenkins
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.0.2.164:9091/eureka/
+      defaultZone: https://freetrial-microservice.opsera.io:8761/eureka/
       
