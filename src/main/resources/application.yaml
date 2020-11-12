@@ -56,7 +56,7 @@ jenkins:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://microservice.internal.opsera.io:8761/eureka/
+      defaultZone: https://microservice.internal.opsera.io:8761/eureka/
 
 ---
 
@@ -78,7 +78,7 @@ jenkins:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://microservice.internal.opsera.io:8761/eureka/
+      defaultZone: https://microservice.internal.opsera.io:8761/eureka/
       
 ---
 
@@ -100,5 +100,5 @@ jenkins:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://freetrial-microservice.opsera.io:8761/eureka/
+      defaultZone: https://freetrial-microservice.opsera.io:8761/eureka/
       
