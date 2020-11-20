@@ -66,8 +66,9 @@ public class DeployController {
         VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
         String secretkey = vaultData.getData().get(vaultSecretKey);
         configuration.setAwsSecretKey(codeDeployerUtil.decodeString(secretkey));
-        ebsService.deploy(configuration);
-        ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.");
+        configuration.setCustomerId(request.getCustomerId());
+        String url = ebsService.deploy(configuration);
+        ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.", url);
         LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", configuration.getApplicationName(), System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

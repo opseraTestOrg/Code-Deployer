@@ -46,11 +46,12 @@ public class ElasticBeanstalkService {
      * @param configuration
      * @throws GeneralElasticBeanstalkException
      */
-    public void deploy(Configuration configuration) throws GeneralElasticBeanstalkException {
+    public String deploy(Configuration configuration) throws GeneralElasticBeanstalkException {
         LOGGER.debug("Deploying application {} to Elastic Beanstalk.", configuration.getApplicationName());
         try {
-            deployToBeantalk(configuration);
+            String url = deployToBeantalk(configuration);
             LOGGER.debug("Completed deploying to application {} with source bundle {}.", configuration.getApplicationName(), configuration.getBucketName());
+            return url;
         } catch (Exception e) {
             LOGGER.error("Error occurred while deploying to application {} with source bundle {} .", configuration.getApplicationName(), configuration.getBucketName(), e);
             throw new GeneralElasticBeanstalkException("Getting error while deploying the application");
