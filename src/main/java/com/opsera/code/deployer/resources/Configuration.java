@@ -47,4 +47,8 @@ public class Configuration extends SSHDetails implements Serializable {
 
     private String s3StepId;
 
+    private String awsToolConfigId;
+
+    private String customerId;
+
 }
