@@ -1,7 +1,5 @@
 package com.opsera.code.deployer.controller;
 
-import java.util.Arrays;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,6 @@ import com.opsera.code.deployer.resources.Configuration;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
 import com.opsera.code.deployer.resources.SSHDeployResult;
-import com.opsera.code.deployer.resources.VaultData;
-import com.opsera.code.deployer.resources.VaultRequest;
 import com.opsera.code.deployer.services.ElasticBeanstalkService;
 import com.opsera.code.deployer.services.SSHService;
 import com.opsera.code.deployer.util.CodeDeployerUtil;
@@ -59,13 +55,6 @@ public class DeployController {
         s3Request.setCustomerId(request.getCustomerId());
         Configuration s3UrlConfig = codeDeployerUtil.getToolConfigurationDetails(s3Request);
         configuration.setS3Url(s3UrlConfig.getS3Url());
-        VaultRequest vaultRequest = new VaultRequest();
-        vaultRequest.setCustomerId(request.getCustomerId());
-        String vaultSecretKey = configuration.getSecretKey().getVaultKey();
-        vaultRequest.setComponentKeys(Arrays.asList(vaultSecretKey));
-        VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
-        String secretkey = vaultData.getData().get(vaultSecretKey);
-        configuration.setAwsSecretKey(codeDeployerUtil.decodeString(secretkey));
         configuration.setCustomerId(request.getCustomerId());
         String url = ebsService.deploy(configuration);
         ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.", url);
