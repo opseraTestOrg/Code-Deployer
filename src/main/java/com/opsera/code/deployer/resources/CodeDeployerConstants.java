@@ -23,5 +23,13 @@ public class CodeDeployerConstants {
     public static final String SSH_DEPLOY = "/ssh/deploy";
     public static final String GET_ARTIFACT_DETAILS = "/v1.0/job/getArtifactDetails";
     public static final String SSH_FILE_UPLOAD = "SSH file upload";
-
+    public static final String BUCKET_NAME = "%s/%s/artifacts";
+    public static final String REGISTRY_DETAILS = "%s.dkr.ecr.%s.amazonaws.com/%s:%s";
+    public static final String QUERY_PARM_TOOLID = "toolId";
+    public static final String QUERY_CUSTOMER_TOOLID = "customerId";
+    public static final String TOOL_REGISTRY_ENDPOINT = "/v2/registry/tool";
+    public static final String IMAGE = "image";
+    public static final String PORTS = "ports";
+    public static final String ENVIRONMENT = "environment";
+    public static final String VOLUMES = "volumes";
 }

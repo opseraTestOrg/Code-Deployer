@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.opsera.code.deployer.config.IServiceFactory;
 import com.opsera.code.deployer.exceptions.GeneralElasticBeanstalkException;
 import com.opsera.code.deployer.exceptions.InvalidDataException;
-import com.opsera.code.deployer.resources.Configuration;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
 import com.opsera.code.deployer.resources.SSHDeployResult;
 import com.opsera.code.deployer.services.ElasticBeanstalkService;
 import com.opsera.code.deployer.services.SSHService;
-import com.opsera.code.deployer.util.CodeDeployerUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,18 +45,9 @@ public class DeployController {
         long startTime = System.currentTimeMillis();
         LOGGER.info("Starting AWS Elastic Beanstalk deployment.");
         ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
-        CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
-        Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
-        ElasticBeanstalkDeployRequest s3Request = new ElasticBeanstalkDeployRequest();
-        s3Request.setPipelineId(request.getPipelineId());
-        s3Request.setStepId(configuration.getS3StepId());
-        s3Request.setCustomerId(request.getCustomerId());
-        Configuration s3UrlConfig = codeDeployerUtil.getToolConfigurationDetails(s3Request);
-        configuration.setS3Url(s3UrlConfig.getS3Url());
-        configuration.setCustomerId(request.getCustomerId());
-        String url = ebsService.deploy(configuration);
+        String url = ebsService.deploy(request);
         ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.", url);
-        LOGGER.info("Finished deploying application {} to Elastic Beanstalk in {}.", configuration.getApplicationName(), System.currentTimeMillis() - startTime);
+        LOGGER.info("Finished deploying customer {} to Elastic Beanstalk in {}.", request.getCustomerId(), System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

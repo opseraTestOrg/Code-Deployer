@@ -1,6 +1,19 @@
 package com.opsera.code.deployer.services;
 
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.BEANSTALK_DEPLOY;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.BUCKET_NAME;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.ENVIRONMENT;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.IMAGE;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.PORTS;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.REGISTRY_DETAILS;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.UPLOAD_FILE;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.VOLUMES;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +25,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.opsera.code.deployer.config.AppConfig;
 import com.opsera.code.deployer.config.IServiceFactory;
 import com.opsera.code.deployer.exceptions.GeneralElasticBeanstalkException;
+import com.opsera.code.deployer.exceptions.InvalidDataException;
 import com.opsera.code.deployer.resources.Configuration;
+import com.opsera.code.deployer.resources.DockerComposer;
+import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
+import com.opsera.code.deployer.resources.ToolDetails;
+import com.opsera.code.deployer.resources.VaultData;
+import com.opsera.code.deployer.resources.VaultRequest;
+import com.opsera.code.deployer.util.CodeDeployerUtil;
 
 @Component
 public class ElasticBeanstalkService {
@@ -46,14 +71,39 @@ public class ElasticBeanstalkService {
      * @param configuration
      * @throws GeneralElasticBeanstalkException
      */
-    public String deploy(Configuration configuration) throws GeneralElasticBeanstalkException {
-        LOGGER.debug("Deploying application {} to Elastic Beanstalk.", configuration.getApplicationName());
+    public String deploy(ElasticBeanstalkDeployRequest request) throws GeneralElasticBeanstalkException {
+        LOGGER.debug("Deploying customer {} to Elastic Beanstalk.", request.getCustomerId());
         try {
+            CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
+            Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
+            configuration.setCustomerId(request.getCustomerId());
+            if (!StringUtils.isEmpty(configuration.getS3StepId())) {
+                ElasticBeanstalkDeployRequest s3Request = new ElasticBeanstalkDeployRequest();
+                s3Request.setPipelineId(request.getPipelineId());
+                s3Request.setStepId(configuration.getS3StepId());
+                s3Request.setCustomerId(request.getCustomerId());
+                Configuration s3UrlConfig = codeDeployerUtil.getToolConfigurationDetails(s3Request);
+                configuration.setS3Url(s3UrlConfig.getS3Url());
+            }
+            if (!StringUtils.isEmpty(configuration.getS3ECRStepId())) {
+                ElasticBeanstalkDeployRequest ecrPushRequest = new ElasticBeanstalkDeployRequest();
+                ecrPushRequest.setPipelineId(request.getPipelineId());
+                ecrPushRequest.setStepId(configuration.getS3ECRStepId());
+                ecrPushRequest.setCustomerId(request.getCustomerId());
+                Configuration ecrPushConfiguration = codeDeployerUtil.getToolConfigurationDetails(ecrPushRequest);
+                String bucketName = configuration.getBucketName();
+                String s3Url = createAndUploadDockerComposer(request, ecrPushConfiguration, configuration);
+                configuration.setS3Url(s3Url);
+                configuration.setBucketName(bucketName);
+                configuration.setPipelineId(request.getPipelineId());
+
+            }
+
             String url = deployToBeantalk(configuration);
             LOGGER.debug("Completed deploying to application {} with source bundle {}.", configuration.getApplicationName(), configuration.getBucketName());
             return url;
         } catch (Exception e) {
-            LOGGER.error("Error occurred while deploying to application {} with source bundle {} .", configuration.getApplicationName(), configuration.getBucketName(), e);
+            LOGGER.error("Error occurred while deploying to customer {} with pipelineid {} .", request.getCustomerId(), request.getPipelineId(), e);
             throw new GeneralElasticBeanstalkException("Getting error while deploying the application");
         }
     }
@@ -78,5 +128,70 @@ public class ElasticBeanstalkService {
             return response.getBody();
         }
         throw new GeneralElasticBeanstalkException("Failed to deploy in Beanstalk");
+    }
+
+    private String createAndUploadDockerComposer(ElasticBeanstalkDeployRequest request, Configuration ecrPushConfiguration, Configuration config) throws JsonProcessingException, InvalidDataException {
+        ElasticBeanstalkDeployRequest buildStepRequest = new ElasticBeanstalkDeployRequest();
+        buildStepRequest.setCustomerId(request.getCustomerId());
+        buildStepRequest.setPipelineId(request.getPipelineId());
+        buildStepRequest.setStepId(ecrPushConfiguration.getBuildStepId());
+        Configuration buildConfiguration = serviceFactory.getCodeDeployerUtil().getToolConfigurationDetails(buildStepRequest);
+        ToolDetails toolDetails = serviceFactory.getCodeDeployerUtil().getToolDetails(config.getAwsToolConfigId(), request.getCustomerId());
+        Configuration awsConfig = toolDetails.getConfiguration();
+        String awsAccountId = awsConfig.getAwsAccountId().getVaultKey();
+        VaultRequest vaultRequest = VaultRequest.builder().customerId(toolDetails.getOwner()).componentKeys(Arrays.asList(awsAccountId)).build();
+        VaultData vaultData = serviceFactory.getCodeDeployerUtil().readDataFromVault(vaultRequest);
+        awsAccountId = serviceFactory.getCodeDeployerUtil().decodeString(vaultData.getData().get(awsAccountId));
+        String ecrImage = String.format(REGISTRY_DETAILS, awsAccountId, awsConfig.getRegions(), buildConfiguration.getDockerName(), buildConfiguration.getDockerTagName());
+        DockerComposer dockerComposer = new DockerComposer();
+        dockerComposer.setVersion("2.4");
+        Map<String, Map<String, Object>> services = new LinkedHashMap<>();
+        Map<String, Object> subServices = new LinkedHashMap<>();
+        subServices.put(IMAGE, ecrImage);
+        subServices.put(PORTS, Arrays.asList(String.format("%s:%s", config.getPort(), config.getPort())));
+        if (!CollectionUtils.isEmpty(config.getEnvironments())) {
+            subServices.put(ENVIRONMENT, config.getEnvironments());
+        }
+        if (!CollectionUtils.isEmpty(config.getDockerVolumePath())) {
+            List<String> volumes = new ArrayList<>();
+            config.getDockerVolumePath().forEach((id, name) -> volumes.add(String.format("%s:%s", id, name)));
+            subServices.put(VOLUMES, volumes);
+        }
+        services.put(buildConfiguration.getDockerName(), subServices);
+        dockerComposer.setServices(services);
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        String dockerComposerFile = objectMapper.writeValueAsString(dockerComposer);
+        config.setBucketName(String.format(BUCKET_NAME, config.getBucketName(), config.getApplicationName()));
+        config.setBucketName(config.getBucketName());
+        config.setFileName(String.format("%s.yml", request.getPipelineId()));
+        LOGGER.debug("Artifact details is BucketName:{} and fileName :{}", config.getBucketName(), config.getFileName());
+        config.setFileData(dockerComposerFile.getBytes());
+        return uploadFileToS3(config);
+
+    }
+
+    /**
+     * 
+     * Uploads file to S3
+     * 
+     * @param config
+     * @return
+     * @throws Exception
+     * @throws S3Exception
+     */
+    private String uploadFileToS3(Configuration config) throws InvalidDataException {
+        LOGGER.debug("Started to connect with aws service to upload the file");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RestTemplate restTemplate = serviceFactory.getRestTemplate();
+        HttpEntity<Configuration> requestEntity = new HttpEntity<>(config, headers);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getAwsServiceBaseUrl()).path(UPLOAD_FILE);
+        ResponseEntity<String> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, requestEntity, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            LOGGER.debug("Completed to connect with aws service to upload the file");
+            return response.getBody();
+        }
+        LOGGER.debug("Getting Error in while File uploading ");
+        throw new InvalidDataException("Getting Error in while File uploading ");
     }
 }

@@ -70,27 +70,24 @@ public class SSHService {
      * @throws GeneralElasticBeanstalkException
      */
     public String sshDeploy(ElasticBeanstalkDeployRequest request) throws GeneralElasticBeanstalkException {
-            LOGGER.debug("Started to deploying the application through ssh");
-            CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
-            Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
+        LOGGER.debug("Started to deploying the application through ssh");
+        CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
+        Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
 
-            VaultRequest vaultRequest = new VaultRequest();
-            vaultRequest.setCustomerId(request.getCustomerId());
+        VaultRequest vaultRequest = VaultRequest.builder().customerId(request.getCustomerId()).componentKeys(Arrays.asList(configuration.getSshKey().getVaultKey())).build();
 
-            vaultRequest.setComponentKeys(Arrays.asList(configuration.getSshKey().getVaultKey()));
+        VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
+        String sshKey = vaultData.getData().get(configuration.getSshKey().getVaultKey());
 
-            VaultData vaultData = codeDeployerUtil.readDataFromVault(vaultRequest);
-            String sshKey = vaultData.getData().get(configuration.getSshKey().getVaultKey());
+        SSHDetailsRequest sshDetailsRequest = getSshDetailsRequest(configuration, sshKey);
 
-            SSHDetailsRequest sshDetailsRequest = getSshDetailsRequest(configuration, sshKey);
+        if (SSH_FILE_UPLOAD.equalsIgnoreCase(configuration.getSshAction())) {
+            getArtifactDetails(request, sshDetailsRequest);
+        }
+        String executionResult = deployToSshExecution(sshDetailsRequest);
+        LOGGER.debug("Completed deploying the application through ssh{}.", configuration.getServerIp());
 
-            if (SSH_FILE_UPLOAD.equalsIgnoreCase(configuration.getSshAction())) {
-                getArtifactDetails(request, sshDetailsRequest);
-            }
-            String executionResult = deployToSshExecution(sshDetailsRequest);
-            LOGGER.debug("Completed deploying the application through ssh{}.", configuration.getServerIp());
-
-            return executionResult;
+        return executionResult;
     }
 
     /**
