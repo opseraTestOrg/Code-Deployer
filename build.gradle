@@ -49,5 +49,6 @@ dependencies {
 	compile('com.google.code.gson:gson:2.8.6')
 	compileOnly 'org.projectlombok:lombok:1.18.4'
 	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly('com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.1.2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

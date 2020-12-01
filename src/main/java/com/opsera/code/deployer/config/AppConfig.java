@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
 @Configuration
 public class AppConfig {
@@ -57,6 +59,17 @@ public class AppConfig {
     @Bean
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
+    }
+
+    /**
+     * 
+     * create Object mapper bean
+     * 
+     * @return
+     */
+    @Bean
+    public ObjectMapper getObjectMapper() {
+        return new ObjectMapper();
     }
 
     /**
