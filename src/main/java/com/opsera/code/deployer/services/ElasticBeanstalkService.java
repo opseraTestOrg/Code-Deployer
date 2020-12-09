@@ -1,7 +1,9 @@
 package com.opsera.code.deployer.services;
 
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.BEANSTALK_DEPLOY;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.BEANSTALK_DEPLOY_STATUS;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.BUCKET_NAME;
+import static com.opsera.code.deployer.resources.CodeDeployerConstants.DEPLOYMENT_STATUS;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.ENVIRONMENT;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.IMAGE;
 import static com.opsera.code.deployer.resources.CodeDeployerConstants.PORTS;
@@ -38,8 +40,10 @@ import com.opsera.code.deployer.config.IServiceFactory;
 import com.opsera.code.deployer.exceptions.GeneralElasticBeanstalkException;
 import com.opsera.code.deployer.exceptions.InvalidDataException;
 import com.opsera.code.deployer.resources.Configuration;
+import com.opsera.code.deployer.resources.DeploymentStatus;
 import com.opsera.code.deployer.resources.DockerComposer;
 import com.opsera.code.deployer.resources.ElasticBeanstalkDeployRequest;
+import com.opsera.code.deployer.resources.ElasticBeanstalkDeployResponse;
 import com.opsera.code.deployer.resources.ToolDetails;
 import com.opsera.code.deployer.resources.VaultData;
 import com.opsera.code.deployer.resources.VaultRequest;
@@ -105,6 +109,32 @@ public class ElasticBeanstalkService {
         } catch (Exception e) {
             LOGGER.error("Error occurred while deploying to customer {} with pipelineid {} .", request.getCustomerId(), request.getPipelineId(), e);
             throw new GeneralElasticBeanstalkException("Getting error while deploying the application");
+        }
+    }
+
+    /**
+     * For deploying to elastic beanstalk
+     * 
+     * 
+     * @param configuration
+     * @throws GeneralElasticBeanstalkException
+     */
+    public ElasticBeanstalkDeployResponse ebsStatus(ElasticBeanstalkDeployRequest request) throws GeneralElasticBeanstalkException {
+        LOGGER.debug("Ebs Application status customer {} to Elastic Beanstalk.", request.getCustomerId());
+        try {
+            CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
+            Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
+            configuration.setCustomerId(request.getCustomerId());
+            String status = statusofBeantalkApplication(configuration);
+            String message = String.format(DEPLOYMENT_STATUS, DeploymentStatus.valueOf(status.toUpperCase()).getName());
+            String url = DeploymentStatus.READY.name().equalsIgnoreCase(status.toUpperCase()) ? String.format("http://%s", configuration.getDomainName()) : "";
+            status = DeploymentStatus.READY.name().equalsIgnoreCase(status.toUpperCase()) ? "Deployed" : status;
+            ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse(status, message, url);
+            LOGGER.debug("Completed deploying status to application {} with source bundle {}.", configuration.getApplicationName(), configuration.getBucketName());
+            return response;
+        } catch (Exception e) {
+            LOGGER.error("Error occurred while deploying status to customer {} with pipelineid {} .", request.getCustomerId(), request.getPipelineId(), e);
+            throw new GeneralElasticBeanstalkException("Getting error while deployment status the application", e);
         }
     }
 
@@ -193,5 +223,25 @@ public class ElasticBeanstalkService {
         }
         LOGGER.debug("Getting Error in while File uploading ");
         throw new InvalidDataException("Getting Error in while File uploading ");
+    }
+
+    /**
+     * TO getting the status of beanstalk
+     * 
+     * @param configuration
+     * @return
+     * @throws GeneralElasticBeanstalkException
+     */
+    private String statusofBeantalkApplication(Configuration configuration) throws GeneralElasticBeanstalkException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RestTemplate restTemplate = serviceFactory.getRestTemplate();
+        HttpEntity<Configuration> requestEntity = new HttpEntity<>(configuration, headers);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(appConfig.getAwsServiceBaseUrl()).path(BEANSTALK_DEPLOY_STATUS);
+        ResponseEntity<String> response = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, requestEntity, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        }
+        throw new GeneralElasticBeanstalkException("Failed to getting the deployment status in Beanstalk");
     }
 }
