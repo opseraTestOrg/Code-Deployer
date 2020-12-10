@@ -45,8 +45,8 @@ public class DeployController {
         long startTime = System.currentTimeMillis();
         LOGGER.info("Starting AWS Elastic Beanstalk deployment.");
         ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
-        String url = ebsService.deploy(request);
-        ElasticBeanstalkDeployResponse response = new ElasticBeanstalkDeployResponse("DEPLOYED", "Elastic Beanstalk application deployed.", url);
+        ebsService.deploy(request);
+        ElasticBeanstalkDeployResponse response = ElasticBeanstalkDeployResponse.builder().status("DEPLOYED").message("Elastic Beanstalk application deployed.").build();
         LOGGER.info("Finished deploying customer {} to Elastic Beanstalk in {}.", request.getCustomerId(), System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -71,6 +71,25 @@ public class DeployController {
         response.setMessage("Application deployed through SSH");
         response.setResult(sshResult);
         LOGGER.info("Finished  applocation deployment through ssh execution or file upload.  {}", System.currentTimeMillis() - startTime);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Endpoint for elastic bean stack deployment status
+     * 
+     * 
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(path = "v1.0/ebs/status", consumes = "application/json", produces = "application/json")
+    @ApiOperation("Deploys build artifacts from AWS S3 to Elastic Beanstalk.")
+    public ResponseEntity<ElasticBeanstalkDeployResponse> elasticBeanstalkDeployStatus(@RequestBody ElasticBeanstalkDeployRequest request) throws GeneralElasticBeanstalkException {
+        long startTime = System.currentTimeMillis();
+        LOGGER.info("Starting AWS Elastic Beanstalk deployment status.");
+        ElasticBeanstalkService ebsService = serviceFactory.getElasticBeanstalkDeployService();
+        ElasticBeanstalkDeployResponse response = ebsService.ebsStatus(request);
+        LOGGER.info("Finished deploying status for customer {} to Elastic Beanstalk in {}.", request.getCustomerId(), System.currentTimeMillis() - startTime);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

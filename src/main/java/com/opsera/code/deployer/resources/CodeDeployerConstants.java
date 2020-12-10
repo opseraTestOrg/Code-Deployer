@@ -18,6 +18,7 @@ public class CodeDeployerConstants {
     public static final String BASIC = "Basic ";
     public static final String VAULT_READ = "/read";
     public static final String BEANSTALK_DEPLOY = "/deploy";
+    public static final String BEANSTALK_DEPLOY_STATUS = "/deploy/status";
     public static final String VAULT_SECRET_KEY = "%s-%s-secretkey";
     public static final String VAULT_SSH_KEY = "%s-%s-sshkey";
     public static final String SSH_DEPLOY = "/ssh/deploy";
@@ -32,4 +33,9 @@ public class CodeDeployerConstants {
     public static final String PORTS = "ports";
     public static final String ENVIRONMENT = "environment";
     public static final String VOLUMES = "volumes";
+    public static final String ELASTIC_BEANSTALK_SUCCESSFULLY = "Elastic Beanstalk is created successfully.";
+    public static final String ELASTIC_BEANSTALK_CREATING = "Elastic Beanstalk is creating environment.";
+    public static final String GREEN = "Green";
+    public static final String IN_PROGRESS = "in progress";
+    public static final String DEPLOYMENT_STATUS = "Deployment is %s";
 }
