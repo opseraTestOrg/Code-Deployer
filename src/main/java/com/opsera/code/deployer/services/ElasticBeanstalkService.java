@@ -172,7 +172,8 @@ public class ElasticBeanstalkService {
         VaultRequest vaultRequest = VaultRequest.builder().customerId(toolDetails.getOwner()).componentKeys(Arrays.asList(awsAccountId)).build();
         VaultData vaultData = serviceFactory.getCodeDeployerUtil().readDataFromVault(vaultRequest);
         awsAccountId = serviceFactory.getCodeDeployerUtil().decodeString(vaultData.getData().get(awsAccountId));
-        String ecrImage = String.format(REGISTRY_DETAILS, awsAccountId, awsConfig.getRegions(), buildConfiguration.getDockerName(), buildConfiguration.getDockerTagName());
+        String ecrImage = String.format(REGISTRY_DETAILS, awsAccountId, awsConfig.getRegions(),
+                StringUtils.isEmpty(ecrPushConfiguration.getEcrRepoName()) ? buildConfiguration.getDockerName() : ecrPushConfiguration.getEcrRepoName(), buildConfiguration.getDockerTagName());
         DockerComposer dockerComposer = new DockerComposer();
         dockerComposer.setVersion("2.4");
         Map<String, Map<String, Object>> services = new LinkedHashMap<>();
