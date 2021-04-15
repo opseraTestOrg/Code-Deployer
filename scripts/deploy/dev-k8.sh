@@ -2,7 +2,7 @@
 set -xe
 
 clusername=${1:-opsera-dev-cluster}
-servicename=${2:-opsera-code-deployer }
+servicename=${2:-opsera-code-deployer}
 
 mkdir -p  ${PWD}/.tmp/kube-vol
 
