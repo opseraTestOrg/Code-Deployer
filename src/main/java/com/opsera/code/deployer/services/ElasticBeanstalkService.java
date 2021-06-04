@@ -86,15 +86,15 @@ public class ElasticBeanstalkService {
             s3ECRRequest.setStepId(configuration.getS3ECRStepId());
             s3ECRRequest.setCustomerId(request.getCustomerId());
             Configuration s3ECRConfiguration = codeDeployerUtil.getToolConfigurationDetails(s3ECRRequest);
+            configuration.setPipelineId(request.getPipelineId());
+            configuration.setStepId(request.getStepId());
             if (s3ECRConfiguration.getJobType().equalsIgnoreCase("SEND S3")) {
                 configuration.setS3Url(s3ECRConfiguration.getS3Url());
-                configuration.setPipelineId(request.getPipelineId());
             } else {
                 String bucketName = configuration.getBucketName();
                 String s3Url = createAndUploadDockerComposer(request, s3ECRConfiguration, configuration);
                 configuration.setS3Url(s3Url);
                 configuration.setBucketName(bucketName);
-                configuration.setPipelineId(request.getPipelineId());
             }
 
             String url = deployToBeantalk(configuration);
