@@ -81,26 +81,19 @@ public class ElasticBeanstalkService {
             CodeDeployerUtil codeDeployerUtil = serviceFactory.getCodeDeployerUtil();
             Configuration configuration = codeDeployerUtil.getToolConfigurationDetails(request);
             configuration.setCustomerId(request.getCustomerId());
-            if (!StringUtils.isEmpty(configuration.getS3StepId())) {
-                ElasticBeanstalkDeployRequest s3Request = new ElasticBeanstalkDeployRequest();
-                s3Request.setPipelineId(request.getPipelineId());
-                s3Request.setStepId(configuration.getS3StepId());
-                s3Request.setCustomerId(request.getCustomerId());
-                Configuration s3UrlConfig = codeDeployerUtil.getToolConfigurationDetails(s3Request);
-                configuration.setS3Url(s3UrlConfig.getS3Url());
-            }
-            if (!StringUtils.isEmpty(configuration.getS3ECRStepId())) {
-                ElasticBeanstalkDeployRequest ecrPushRequest = new ElasticBeanstalkDeployRequest();
-                ecrPushRequest.setPipelineId(request.getPipelineId());
-                ecrPushRequest.setStepId(configuration.getS3ECRStepId());
-                ecrPushRequest.setCustomerId(request.getCustomerId());
-                Configuration ecrPushConfiguration = codeDeployerUtil.getToolConfigurationDetails(ecrPushRequest);
+            ElasticBeanstalkDeployRequest s3ECRRequest = new ElasticBeanstalkDeployRequest();
+            s3ECRRequest.setPipelineId(request.getPipelineId());
+            s3ECRRequest.setStepId(configuration.getS3ECRStepId());
+            s3ECRRequest.setCustomerId(request.getCustomerId());
+            Configuration s3ECRConfiguration = codeDeployerUtil.getToolConfigurationDetails(s3ECRRequest);
+            if (s3ECRConfiguration.getJobType().equalsIgnoreCase("SEND S3")) {
+                configuration.setS3Url(s3ECRConfiguration.getS3Url());
+            } else {
                 String bucketName = configuration.getBucketName();
-                String s3Url = createAndUploadDockerComposer(request, ecrPushConfiguration, configuration);
+                String s3Url = createAndUploadDockerComposer(request, s3ECRConfiguration, configuration);
                 configuration.setS3Url(s3Url);
                 configuration.setBucketName(bucketName);
                 configuration.setPipelineId(request.getPipelineId());
-
             }
 
             String url = deployToBeantalk(configuration);
