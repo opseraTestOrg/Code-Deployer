@@ -49,6 +49,7 @@ public class Configuration extends SSHDetails implements Serializable {
     private String dockerTagName;
     private SecretKey awsAccountId;
     private String pipelineId;
+    private String stepId;
     private String ecrRepoName;
     private String jobType;
     private String environmentName;
