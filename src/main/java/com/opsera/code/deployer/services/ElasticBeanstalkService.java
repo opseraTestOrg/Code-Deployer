@@ -88,7 +88,6 @@ public class ElasticBeanstalkService {
             Configuration s3ECRConfiguration = codeDeployerUtil.getToolConfigurationDetails(s3ECRRequest);
             if (s3ECRConfiguration.getJobType().equalsIgnoreCase("SEND S3")) {
                 configuration.setS3Url(s3ECRConfiguration.getS3Url());
-                configuration.setPipelineId(request.getPipelineId());
             } else {
                 String bucketName = configuration.getBucketName();
                 String s3Url = createAndUploadDockerComposer(request, s3ECRConfiguration, configuration);
