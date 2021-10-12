@@ -1,13 +1,17 @@
 logging:
-   file: codeDeployer
-   path: /apps/OpsERA/logs/components/code-deployer
+   file: 
+     name: codeDeployer
+     path: /apps/OpsERA/logs/components/code-deployer
 server:
    port: 8077
+   shutdown: graceful
    
 spring:
  application:
     name: code-deployer
     description: API for integrating with deploy the code
+ lifecycle:
+    timeout-per-shutdown-phase: 2h
 
 eureka:
   instance:
