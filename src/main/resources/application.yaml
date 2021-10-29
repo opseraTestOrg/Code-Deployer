@@ -1,125 +1,31 @@
 logging:
-   file: codeDeployer
-   path: /apps/OpsERA/logs/components/code-deployer
+  file: 
+    name: codeDeployer
+    path: /apps/OpsERA/logs/components/code-deployer
 server:
-   port: 8077
+  port: 8077
+  shutdown: graceful
    
 spring:
- application:
+  application:
     name: code-deployer
     description: API for integrating with deploy the code
-
-eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
+  lifecycle:
+    timeout-per-shutdown-phase: 2h
 
 ---
 
 spring:
- profiles: dev
-
+  profiles: kubernetes
 pipeline:
- config:
-  baseurl: http://microservices-dev.opsera.io:9091/api/pipeline
+  config:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/pipeline
 aws:
- service:
-  baseurl: http://microservices-dev.opsera.io:9091/api/aws
+  service:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/aws
 vault:
- service:
-  baseurl: http://microservices-dev.opsera.io:9091/api/vault
+  service:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/vault
 jenkins:
- integrator:
-  baseurl: http://microservices-dev.opsera.io:9091/api/jenkins
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://microservices-dev.opsera.io:8761/eureka/
-
----
-
-spring:
- profiles: test
- 
-pipeline:
- config:
-  baseurl: https://microservice.internal.opsera.io/api/pipeline
-aws:
- service:
-  baseurl: https://microservice.internal.opsera.io/api/aws
-vault:
- service:
-  baseurl: https://microservice.internal.opsera.io/api/vault
-jenkins:
- integrator:
-  baseurl: https://microservice.internal.opsera.io/api/jenkins
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: https://microservice.internal.opsera.io:8761/eureka/
-
----
-
-spring:
- profiles: prod
-
-pipeline:
- config:
-  baseurl: https://microservice.internal.opsera.io/api/pipeline
-aws:
- service:
-  baseurl: https://microservice.internal.opsera.io/api/aws
-vault:
- service:
-  baseurl: https://microservice.internal.opsera.io/api/vault
-jenkins:
- integrator:
-  baseurl: https://microservice.internal.opsera.io/api/jenkins
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: https://microservice.internal.opsera.io:8761/eureka/
-      
----
-
-spring:
- profiles: freetrial
-
-pipeline:
- config:
-  baseurl: https://freetrial-microservice.opsera.io/api/pipeline
-aws:
- service:
-  baseurl: https://freetrial-microservice.opsera.io/api/aws
-vault:
- service:
-  baseurl: https://freetrial-microservice.opsera.io/api/vault
-jenkins:
- integrator:
-  baseurl: https://freetrial-microservice.opsera.io/api/jenkins
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: https://freetrial-microservice.opsera.io:8761/eureka/
-     
----
-
-spring:
- profiles: kubernetes
-pipeline:
- config:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/pipeline
-aws:
- service:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/aws
-vault:
- service:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/vault
-jenkins:
- integrator:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/jenkins
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://opsera-service-discovery.microservices.svc.cluster.local:8761/eureka/
-      
+  integrator:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/jenkins
