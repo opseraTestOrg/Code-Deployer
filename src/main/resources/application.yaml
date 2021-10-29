@@ -1,31 +1,31 @@
 logging:
-   file: 
-     name: codeDeployer
-     path: /apps/OpsERA/logs/components/code-deployer
+  file: 
+    name: codeDeployer
+    path: /apps/OpsERA/logs/components/code-deployer
 server:
-   port: 8077
-   shutdown: graceful
+  port: 8077
+  shutdown: graceful
    
 spring:
- application:
+  application:
     name: code-deployer
     description: API for integrating with deploy the code
- lifecycle:
+  lifecycle:
     timeout-per-shutdown-phase: 2h
 
 ---
 
 spring:
- profiles: kubernetes
+  profiles: kubernetes
 pipeline:
- config:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/pipeline
+  config:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/pipeline
 aws:
- service:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/aws
+  service:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/aws
 vault:
- service:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/vault
+  service:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/vault
 jenkins:
- integrator:
-  baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/jenkins
+  integrator:
+    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/jenkins
