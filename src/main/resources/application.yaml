@@ -13,19 +13,24 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 2h
 
+pipeline:
+  config:
+    baseurl: ${opsera.config.baseurl}/api/pipeline
+aws:
+  service:
+    baseurl: ${opsera.config.baseurl}/api/aws
+vault:
+  service:
+    baseurl: ${opsera.config.baseurl}/api/vault
+jenkins:
+  integrator:
+    baseurl: ${opsera.config.baseurl}/api/jenkins
+
 ---
 
 spring:
   profiles: kubernetes
-pipeline:
+opsera:
   config:
-    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/pipeline
-aws:
-  service:
-    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/aws
-vault:
-  service:
-    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/vault
-jenkins:
-  integrator:
-    baseurl: http://opsera-apigateway.microservices.svc.cluster.local:9091/api/jenkins
+    baseurl: ${OPSERA_API_SERVICE_URL:http://opsera-apigateway.microservices.svc.cluster.local:9091}
+
