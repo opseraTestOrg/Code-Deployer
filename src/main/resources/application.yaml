@@ -12,6 +12,9 @@ spring:
     description: API for integrating with deploy the code
   lifecycle:
     timeout-per-shutdown-phase: 2h
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
 
 pipeline:
   config:
