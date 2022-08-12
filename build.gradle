@@ -53,5 +53,5 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 	implementation 'junit:junit:4.13.1'
-	compile('commons-io:commons-io:2.11.0')
+	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 }
