@@ -42,7 +42,7 @@ repositories {
 ext['log4j2.version'] = '2.17.1'
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.apache.httpcomponents:httpclient:4.5.12')
+	compile('org.apache.httpcomponents:httpclient:4.5.13')
 	compile('com.offbytwo.jenkins:jenkins-client:0.3.8')
 	compile('io.springfox:springfox-swagger-ui:2.10.0')
 	compile('io.springfox:springfox-swagger2:2.9.2')
@@ -53,4 +53,5 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 	implementation 'junit:junit:4.13.1'
+	compile('commons-io:commons-io:2.11.0')
 }
